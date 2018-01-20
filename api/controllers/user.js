@@ -5,28 +5,14 @@ const createUser = (req, res) => {
   // there should be a user object set on req
   // use that req.user object to create a user and save it to our Mongo instance.
   const { username, password } =  req.body;
-  const user =  new User({
-    username,
-    password
-  });
+  const user =  new User(req.body);
   user.save(function(err,user) {
-    if(err) { return(next(err)); }
-    res.status(200).send();
-  });
-  res.send(user);
-
-
-  // user.save(function() {
-  // }).then(function(result) {
-  //     res.status(200).json(result);
-  //     console.log(`User created: ${result}`);
-  // }).catch(function(err) {
-  //     res.status(500).send(err);
-  //     console.log("An error occurred when creating user.", err);
-  // });
+    if(err) { 
+      return(err);
+     }
+    res.status(200).json(user); 
+  }); 
 };
-
-
 module.exports = {
   createUser
 };
