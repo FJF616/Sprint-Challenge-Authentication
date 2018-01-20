@@ -1,8 +1,9 @@
 const jwt = require('jsonwebtoken');
 const bcrypt = require('bcrypt');
-
+const mongoose = require('mongoose');
 const User = require('../models/userModels');
 const { mysecret } = require('../../config');
+const {createUser} = require('../controllers/index');
 const SaltRounds = 11;
 
 const authenticate = (req, res, next) => {
@@ -26,27 +27,22 @@ const encryptUserPW = (req, res, next) => {
   // TODO: Fill this middleware in with the Proper password encrypting, bcrypt.hash()
   // Once the password is encrypted using bcrypt you'll need to set a user obj on req.user with the encrypted PW
   // Once the user is set, call next and head back into the userController to save it to the DB
-  if (!user.isModified('password')) {
-    res
-      .status(422)
-      .json({ error: 'Invalid username/password' });
-  }
- 
-  // generate a salt
-  bcrypt.genSalt(SALT_WORK_FACTOR, function(err, salt) {
-      if (err) return next(err);
-
-      // hash the password 
-      bcrypt.hash(user.password, salt, function(err, hash) {
-          if (err) return next(err);
-
-          // tack it on
-          user.password = hash;
-          next();
-      });
-  });
+// var user = new User({
+//   username,
+//   password
+// });
+ bcrypt.hash(req.body.password, SaltRounds, function (err, hash) {
+  User.password = hash;
+  next();
+ });
+//   user.save(function(err,user) {
+//    if(err) { return(next(err)); }
+//    res.status(200).send();
+//  });
+//  res.send(user);
+// next();
+// });
 };
-
 const compareUserPW = (req, res, next) => {
   const { username, password } = req.body;
   User.findOne({ username }, function(err, user) {
@@ -56,7 +52,10 @@ const compareUserPW = (req, res, next) => {
     if (err) return cb(err);
     cb(null, isMatch);
     if(isMatch) {
-      req.username = user.username;
+      const userData = {
+        username: req.body.username,
+        password: req.body.password
+      }
       next();
     }
   });

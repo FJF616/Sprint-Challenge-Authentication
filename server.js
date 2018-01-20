@@ -1,9 +1,9 @@
 const express = require('express');
 const bodyParser = require('body-parser');
 const cors = require('cors');
-
+const mySecret = require('./config');
 const routes = require('./api/routes/routes');
-
+// const session = require('express-session');
 const server = express();
 const corsOptions = {
   // If you're moving onto the stretch problem you'll need to set this obj with the appropriate fields
@@ -12,7 +12,13 @@ const corsOptions = {
 };
 
 server.use(bodyParser.json());
+// server.use(session({
+//   secret: mySecret,
+//   resave: true,
+//   saveUninitialized: false
+// }));
 server.use(cors());
+
 
 routes(server);
 
