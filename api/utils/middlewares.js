@@ -50,7 +50,7 @@ const compareUserPW = (req, res, next) => {
       res.status(500).json({ error: 'Invalid Username/Password' });
       return;
     }
-    if (user === null) {
+    if (username === null) {
       res.status(422).json({ error: 'No user with that username in our DB' });
       return;
     }
