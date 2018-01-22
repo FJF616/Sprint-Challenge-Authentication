@@ -47,22 +47,17 @@ const compareUserPW = (req, res, next) => {
   const { username, password } = req.body;
   User.findOne({ username }, (err, user) => {
     if (err) {
-      res.status(500).json({ error: 'Invalid Username/Password' });
-      return;
+     return res.status(500).json({ error: 'Invalid Username/Password' });  
     }
-    if (username === null) {
-      res.status(422).json({ error: 'No user with that username in our DB' });
-      return;
+    if (!username === null) {
+     return res.status(422).json({ error: 'No user with that username in our DB' });
     }
     user.checkPassword(password, (nonMatch, hashMatch) => {
-      // This is an example of using our User.method from our model.
-      if (nonMatch !== null) {
-        res.status(422).json({ error: 'passwords dont match' });
-        return;
-      }
       if (hashMatch) {
         req.username = user.username;
         next();
+      } else {
+        return res.status(422).json({ error: 'passwords dont match' });
       }
     });
   });
